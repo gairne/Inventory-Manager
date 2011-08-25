@@ -1,12 +1,28 @@
+/*
+ * Copyright 2011  Matthew Mole <code@gairne.co.uk>
+ * 
+ * This file is part of Inventory Manager.
+ * 
+ * Inventory Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Inventory Manager is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Inventory Manager.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package android.gairne.inventoryman;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -18,12 +34,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class InventoryManagerActivity extends Activity {
 	public static String FILENAME = "inventory";
@@ -71,7 +85,6 @@ public class InventoryManagerActivity extends Activity {
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
-                String format = intent.getStringExtra("Scom.google.zxing.client.android.SCAN.SCAN_RESULT_FORMAT");
                 ArrayList<String> temp = new ArrayList<String>(Arrays.asList(itemsOnDisplay));
                 temp.add(contents);
                 Log.v("INVMAN", contents);
@@ -125,16 +138,13 @@ public class InventoryManagerActivity extends Activity {
     			Toast.makeText(getApplicationContext(), "Not a file: " + FILENAME, Toast.LENGTH_SHORT).show();
     			return;
     		}
-    		//Toast.makeText(getApplicationContext(), "readHistory: File OK", Toast.LENGTH_SHORT).show();
     		FileInputStream fis = new FileInputStream(input);
     		InputStreamReader isr = new InputStreamReader(fis);
     		BufferedReader in = new BufferedReader(isr);
     	    String line;
-    	    //Toast.makeText(getApplicationContext(), "readHistory: About to read", Toast.LENGTH_SHORT).show();
     	    while ((line = in.readLine()) != null) {
     	    	  temp.add(line);
     	    }
-    	    //Toast.makeText(getApplicationContext(), "readHistory: Read OK", Toast.LENGTH_SHORT).show();
     	    in.close();
     	}
     	catch (java.io.FileNotFoundException e) {
@@ -145,8 +155,6 @@ public class InventoryManagerActivity extends Activity {
     		Toast.makeText(getApplicationContext(), "IOException in readHistory: " + e.getMessage() + " | " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
     		return;
     	}
-    	//Toast.makeText(getApplicationContext(), "Successfully read", Toast.LENGTH_SHORT).show();
     	itemsOnDisplay = temp.toArray(itemsOnDisplay);
-    	//Toast.makeText(getApplicationContext(), "Successfully readHistory", Toast.LENGTH_SHORT).show();
     }
 }
