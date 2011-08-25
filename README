@@ -1,0 +1,10 @@
+Inventory Management
+
+Copyright 2011  Matthew Mole <code@gairne.co.uk>
+
+An Inventory Manager for android, intended to be very basic. Uses the ZXing barcode reader to capture barcodes and stores captured barcodes (one-per-line) in the 'inventory' file on the sdcard root.
+
+You must have the ZXing barcode reader installed, available at:
+https://market.android.com/details?id=com.google.zxing.client.android
+
+Any captured barcodes will be stored in a file 'inventory' in the sdcard root directory (typically /mnt/sdcard or /sdcard)
