@@ -36,7 +36,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -88,10 +93,46 @@ public class InventoryManagerActivity extends Activity {
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemsOnDisplay);
         history.setAdapter(listAdapter);
         
+        registerForContextMenu(history);
+        
         scan.setVisibility(Button.VISIBLE);
         scan.setOnClickListener(mScan);
         Toast.makeText(getApplicationContext(), "Ready to go", Toast.LENGTH_SHORT).show();
     }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+      super.onCreateContextMenu(menu, v, menuInfo);
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.context_menu, menu);
+    }
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+      AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+      switch (item.getItemId()) {
+      case R.id.edit:
+    	  return true;
+      case R.id.delete:
+    	  String[] newItemsOnDisplay = new String[itemsOnDisplay.length-1];
+    	  for (int i = 0; i < newItemsOnDisplay.length; i++) {
+    		  if (i >= info.position) {
+    			  newItemsOnDisplay[i] = itemsOnDisplay[i+1];
+    		  }
+    		  else {
+    			  newItemsOnDisplay[i] = itemsOnDisplay[i];
+    		  }
+    	  }
+    	  itemsOnDisplay = newItemsOnDisplay;
+    	  writeHistory();
+    	  updateList();
+    	  return true;
+      default:
+        return super.onContextItemSelected(item);
+      }
+    }
+    
+    
     
     public Button.OnClickListener mScan = new Button.OnClickListener() {
         public void onClick(View v) {
