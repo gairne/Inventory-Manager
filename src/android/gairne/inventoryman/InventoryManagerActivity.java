@@ -30,8 +30,11 @@ import java.util.Arrays;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -40,12 +43,24 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class InventoryManagerActivity extends Activity {
-	public static String FILENAME = "inventory";
+	public static String APP_DIR = "invman/";
+	public static String FILENAME = APP_DIR + "inventory";
+	public static String CAMERA_DIR = APP_DIR + "images/";
+	
+	public static final int BARCODE_REQ = 0;
+	public static final int CAMERA_REQ = 1;
 	
 	private String[] itemsOnDisplay;
 	private ArrayAdapter<String> listAdapter;
 	private ListView history;
 	private Button scan;
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		super.onConfigurationChanged(newConfig);
+		setContentView(R.layout.main);
+	}
 	
 	/** Called when the activity is first created. */
     @Override
@@ -61,6 +76,11 @@ public class InventoryManagerActivity extends Activity {
         	Toast.makeText(getApplicationContext(), "Cannot write to root", Toast.LENGTH_SHORT).show();
         }
         FILENAME = (new File(root, FILENAME)).getAbsolutePath();
+        CAMERA_DIR = (new File(root, CAMERA_DIR)).getAbsolutePath();
+        		
+        if (!new File(CAMERA_DIR).exists()) {
+        	(new File(CAMERA_DIR)).mkdirs();
+        }
         
         history = (ListView) findViewById(R.id.history);
         itemsOnDisplay = new String[0];
@@ -77,12 +97,22 @@ public class InventoryManagerActivity extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent("com.google.zxing.client.android.SCAN");
             intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "PRODUCT_MODE");
-            startActivityForResult(intent, 0);
+            startActivityForResult(intent, BARCODE_REQ);
         }
     };
+    
+    public void takePhoto(String barcode) {
+    	Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+    	File photo = new File(CAMERA_DIR + "/" + barcode + ".jpg");
+    	if (photo.exists()) {
+    		return;
+    	}
+    	intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+    	startActivityForResult(intent, CAMERA_REQ);
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 0) {
+        if (requestCode == BARCODE_REQ) {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 ArrayList<String> temp = new ArrayList<String>(Arrays.asList(itemsOnDisplay));
