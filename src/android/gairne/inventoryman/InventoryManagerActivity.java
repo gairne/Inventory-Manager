@@ -162,6 +162,7 @@ public class InventoryManagerActivity extends Activity {
                 itemsOnDisplay = temp.toArray(itemsOnDisplay);
                 writeHistory();
                 updateList();
+                takePhoto(contents);
                 Toast.makeText(getApplicationContext(), "Completed (" + itemsOnDisplay[itemsOnDisplay.length-1] + ")", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
             	Toast.makeText(getApplicationContext(), "Cancelled in onActivityResult", Toast.LENGTH_SHORT).show();
